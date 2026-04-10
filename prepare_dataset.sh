@@ -10,7 +10,15 @@ HEADERS["values.csv"]="Language_ID,Parameter_ID,Code_ID"
 HEADERS["parameters.csv"]="ID,Name"
 HEADERS["languages.csv"]="ID,Name,Latitude,Longitude,Country_ID"
 HEADERS["countries.csv"]="ID,Name"
-HEADERS["codes.csv"]="ID,Parameter_ID,Name,Description"
+HEADERS["codes.csv"]="ID,Name,Description"
+
+declare -A RENAMES
+RENAMES["languages.csv"]="Language_Name"
+RENAMES["parameters.csv"]="Parameter_Name"
+RENAMES["codes.csv"]="Code_Name"
+RENAMES["countries.csv"]="Country_Name"
+
+FINAL_PATH="$DATASET_DIR/features.csv"
 
 fetch() {
   echo "Starting fetch..."
@@ -42,13 +50,20 @@ prune() {
     exit 1
   fi
 
-  for file in "{$FILES[@]}"; do
+  for file in "${FILES[@]}"; do
     if [[ -f "$DATASET_DIR/$file" ]]; then
       cols=${HEADERS[$file]}
 
       if [[ -n $cols ]]; then
         echo "Pruning $file (keeping: $cols)..."
-        xsv select "$cols" "$DATASET_DIR/$file" | sponge "$DATASET_DIR/$file"
+
+        xan select "$cols" "$DATASET_DIR/$file" | {
+          if [[ -n "${RENAMES[$file]}" ]]; then
+            xan rename "${RENAMES[$file]}" -s "Name"
+          else
+            cat
+          fi
+        } | sponge "$DATASET_DIR/$file"
       else
         echo "Error: No headers were specified for this file"
         exit 1
@@ -59,8 +74,36 @@ prune() {
   echo "[PRUNE success]"
 }
 
+join() {
+  local file=$1
+  local on_left=$2
+  local on_right=$3
+
+  echo "Joining $FINAL_PATH with $file on ($on_left = $on_right)..."
+
+  xan join "$on_left" "$FINAL_PATH" "$on_right" "$file" |
+    xan select "!$on_right" |
+    sponge "$FINAL_PATH"
+}
+
+join_all() {
+  echo "Starting join..."
+
+  if [[ -e "$FINAL_PATH" ]]; then
+    echo "Error: $FINAL_PATH already exists"
+    exit 1
+  fi
+
+  echo "Copying values.csv into $FINAL_PATH..."
+  cp "$DATASET_DIR/values.csv" "$FINAL_PATH"
+
+  join "$DATASET_DIR/languages.csv" "Language_ID" "ID"
+  join "$DATASET_DIR/parameters.csv" "Parameter_ID" "ID"
+  join "$DATASET_DIR/codes.csv" "Code_ID" "ID"
+}
+
 usage() {
-  echo "Usage: $0 {fetch|prune}"
+  echo "Usage: $0 {fetch|prune|join}"
   exit 1
 }
 
@@ -70,6 +113,9 @@ fetch)
   ;;
 prune)
   prune
+  ;;
+join)
+  join_all
   ;;
 *)
   usage
