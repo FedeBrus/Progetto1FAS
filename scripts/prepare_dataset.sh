@@ -5,6 +5,8 @@ FILES=("values.csv" "languages.csv" "countries.csv" "codes.csv" "parameters.csv"
 DATASET_DIR="./dataset"
 CLONED_DIR="./wals_temp"
 
+RAW_DIR="$DATASET_DIR/raw"
+
 declare -A HEADERS
 HEADERS["values.csv"]="Language_ID,Parameter_ID,Code_ID"
 HEADERS["parameters.csv"]="ID,Name"
@@ -24,7 +26,7 @@ fetch() {
   echo "Starting fetch..."
 
   [[ -d "$CLONED_DIR" ]] && rm -rf "$CLONED_DIR"
-  [[ ! -d "$DATASET_DIR" ]] && mkdir -p "$DATASET_DIR"
+  [[ ! -d "$DATASET_DIR" ]] && mkdir -p "$DATASET_DIR" "$RAW_DIR"
 
   echo "Cloning dataset from $REMOTE..."
   git clone "$REMOTE" "$CLONED_DIR"
@@ -32,8 +34,8 @@ fetch() {
   echo "Moving dataset's files..."
   for target in "${FILES[@]}"; do
     if [[ -f "$CLONED_DIR/cldf/$target" ]]; then
-      echo "Moving $target in $DATASET_DIR..."
-      mv "$CLONED_DIR/cldf/$target" "$DATASET_DIR/"
+      echo "Moving $target in $RAW_DIR..."
+      mv "$CLONED_DIR/cldf/$target" "$RAW_DIR/"
     fi
   done
 
@@ -48,22 +50,25 @@ prune() {
   if [[ ! -d "$DATASET_DIR" ]]; then
     echo "Error: Directory $DATASET_DIR not found. Execute 'fetch' first."
     exit 1
+  elif [[ ! -d "$RAW_DIR" ]]; then
+    echo "Error: Directory $RAW_DIR not found. Execute 'fetch' first."
+    exit 1
   fi
 
   for file in "${FILES[@]}"; do
-    if [[ -f "$DATASET_DIR/$file" ]]; then
+    if [[ -f "$RAW_DIR/$file" ]]; then
       cols=${HEADERS[$file]}
 
       if [[ -n $cols ]]; then
         echo "Pruning $file (keeping: $cols)..."
 
-        xan select "$cols" "$DATASET_DIR/$file" | {
+        xan select "$cols" "$RAW_DIR/$file" | {
           if [[ -n "${RENAMES[$file]}" ]]; then
             xan rename "${RENAMES[$file]}" -s "Name"
           else
             cat
           fi
-        } | sponge "$DATASET_DIR/$file"
+        } | sponge "$RAW_DIR/$file"
       else
         echo "Error: No headers were specified for this file"
         exit 1
@@ -95,11 +100,13 @@ join_all() {
   fi
 
   echo "Copying values.csv into $FINAL_PATH..."
-  cp "$DATASET_DIR/values.csv" "$FINAL_PATH"
+  cp "$RAW_DIR/values.csv" "$FINAL_PATH"
 
-  join "$DATASET_DIR/languages.csv" "Language_ID" "ID"
-  join "$DATASET_DIR/parameters.csv" "Parameter_ID" "ID"
-  join "$DATASET_DIR/codes.csv" "Code_ID" "ID"
+  join "$RAW_DIR/languages.csv" "Language_ID" "ID"
+  join "$RAW_DIR/parameters.csv" "Parameter_ID" "ID"
+  join "$RAW_DIR/codes.csv" "Code_ID" "ID"
+
+  echo "[JOIN success]"
 }
 
 usage() {

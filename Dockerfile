@@ -2,22 +2,27 @@ FROM ubuntu:24.04
 
 WORKDIR /usr/local/wals_analysis
 
+# Dependencies
 RUN apt-get update && apt-get install -y \
     git \
     moreutils \
     curl \
+    build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-ARG XAN_VERSION=v0.1.1
+# Rust environment variables
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:$PATH
 
-RUN curl -L "https://github.com/geoffroy-aubry/xan/releases/download/${XAN_VERSION}/xan-linux-x86_64" -o /usr/local/bin/xan \
-    && chmod +x /usr/local/bin/xan
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+RUN cargo install xan --locked
 
-COPY prepare_dataset.sh ./
-RUN chmod +x prepare_dataset.sh
+COPY . .
+RUN chmod +x ./scripts/prepare_dataset.sh
 
-RUN ./prepare_dataset.sh fetch
-RUN ./prepare_dataset.sh prune
-RUN ./prepare_dataset.sh join 
+RUN ./scripts/prepare_dataset.sh fetch
+RUN ./scripts/prepare_dataset.sh prune
+RUN ./scripts/prepare_dataset.sh join 
 
 CMD ["bash"]
