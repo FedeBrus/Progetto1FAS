@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 REMOTE="https://github.com/cldf-datasets/wals.git"
-FILES=("values.csv" "languages.csv" "countries.csv" "language_names.csv" "codes.csv" "parameters.csv")
+FILES=("values.csv" "languages.csv" "countries.csv" "codes.csv" "parameters.csv")
 
 DATASET_DIR="./dataset"
 CLONED_DIR="./wlas"
