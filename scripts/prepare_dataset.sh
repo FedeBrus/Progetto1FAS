@@ -10,9 +10,9 @@ RAW_DIR="$DATASET_DIR/raw"
 declare -A HEADERS
 HEADERS["values.csv"]="Language_ID,Parameter_ID,Code_ID"
 HEADERS["parameters.csv"]="ID,Name"
-HEADERS["languages.csv"]="ID,Name,Latitude,Longitude,Country_ID"
+HEADERS["languages.csv"]="ID,Name,Latitude,Longitude,Country_ID,Macroarea,Family,Subfamily,Genus"
 HEADERS["countries.csv"]="ID,Name"
-HEADERS["codes.csv"]="ID,Name,Description"
+HEADERS["codes.csv"]="ID,Name,Description,Number"
 
 declare -A RENAMES
 RENAMES["languages.csv"]="Language_Name"
