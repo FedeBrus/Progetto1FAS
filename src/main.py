@@ -10,17 +10,21 @@ def parse_args():
     
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands", required=True)
 
-    # --- count ---
-    parser_count = subparsers.add_parser("count_languages")
+    # --- count languages by country ---
+    parser_count_by_country = subparsers.add_parser("count_by_countries")
+    parser_count_by_country.add_argument("-o", "--order", choices=["ascending", "descending"]) 
+    parser_count_by_country.add_argument("-f", "--filter-country", nargs='+')
 
-    parser_count.add_argument("group", choices=["family", "country", "feature"])
-    parser_count.add_argument("-i", "--feature-id", default=None)
+    # --- count languages by family ---
+    parser_count_by_family = subparsers.add_parser("count_by_families")
+    parser_count_by_family.add_argument("-o", "--order", choices=["ascending", "descending"]) 
+    parser_count_by_family.add_argument("-f", "--filter-family", nargs='+')
 
-    parser_count.add_argument("-d", "--descending", action="store_true")
-    
-    parser_count.add_argument("-f", "--filter-family", nargs='+')
-    parser_count.add_argument("-c", "--filter-country", nargs='+')
-    
+    # --- count feature values ---
+    parser_count_by_feature = subparsers.add_parser("count_by_features")
+    parser_count_by_feature.add_argument("feature_id")
+    parser_count_by_feature.add_argument("-o", "--order", choices=["ascending", "descending"]) 
+
     # --- features ---
     parser_features = subparsers.add_parser("features")
 
@@ -29,23 +33,39 @@ def parse_args():
 def main():
     args = parse_args()
     dataset_path = "../dataset/features.csv"
+    
     try:
         df = load_data(dataset_path)
     except FileNotFoundError as e:
         print(f"Error: dataset file ({dataset_path}) not found")
         sys.exit(1)
         
-    if args.command == "count_languages":
-        count_series = stats.count(
+    if args.command == "count_by_countries":
+        count_df = stats.count_by_countries(
             df,
-            args.group,
-            feature_id=args.feature_id,
-            descending=args.descending,
-            filter_family=args.filter_family,
+            order=args.order,
             filter_country=args.filter_country
         )
 
-        plotter.count_plot(count_series)
+        plotter.count_plot(count_df)
+
+    elif args.command == "count_by_families":
+        count_df = stats.count_by_families(
+            df,
+            order=args.order,
+            filter_family=args.filter_family
+        )
+
+        plotter.count_plot(count_df)
+
+    elif args.command == "count_by_features":
+        count_df = stats.count_by_feature(
+            df,
+            order=args.order,
+            feature_id=args.feature_id
+        )
+
+        plotter.count_plot(count_df)
     
     elif args.command == "features":
         info.print_features(df)        
