@@ -1,5 +1,6 @@
 import argparse
-
+import sys
+from loader import load_data
 
 def parse_args():
     parser = argparse.ArgumentParser(prog="wals_analyze", description="WALS Data Analysis Tool")
@@ -37,7 +38,14 @@ def parse_args():
 
 def main():
     args = parse_args()
-    # df = load_data("./dataset/features.csv")
+    dataset_path = "../dataset/features.csv"
+    try:
+        df = load_data(dataset_path)
+    except FileNotFoundError as e:
+        print(f"Error: dataset file ({dataset_path}) not found")
+        sys.exit(1)
+        
+    print(df)
 
     if args.command == "aggregate":
         pass
