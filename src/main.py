@@ -2,6 +2,7 @@ import argparse
 import sys
 from loader import load_data
 from stats import *
+from plotter import *
 
 def parse_args():
     parser = argparse.ArgumentParser(prog="wals_analyze", description="WALS Data Analysis Tool")
@@ -51,8 +52,7 @@ def main():
             filter_country=args.filter_country
         )
 
-        # plot = plot(average_frame)
-        # display(plot)
+        plot_average(average_frame)
     
     elif args.command == "count":
         pass

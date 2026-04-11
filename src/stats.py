@@ -22,7 +22,6 @@ def average(df, metric, feature, descending=False, filter_family=[], filter_coun
     query_df = query_df.groupby(metric).mean()
 
     query_df = query_df.sort_values(by="Number", ascending=not descending)
-    
-    print(query_df)
+        
     return query_df 
 
