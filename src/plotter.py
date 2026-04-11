@@ -1,5 +1,6 @@
-import matplotlib as mpl
+import matplotlib.pyplot as plt
 
-def plot_average(df):
-    df.plot(kind="bar", y="Number")
-    mpl.pyplot.show()    
+def count_plot(count_series):
+    count_series.plot.bar()
+    plt.tight_layout()
+    plt.show()

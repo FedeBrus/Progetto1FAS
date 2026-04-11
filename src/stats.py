@@ -1,27 +1,21 @@
 import pandas as pd
 
-def average(df, metric, feature, descending=False, filter_family=[], filter_country=[]):
-    
-    if metric == "family":
-        metric = "Family"
-    elif metric == "country":
-        metric = "Country_ID"
+def count(df, metric, feature_id=None, descending=False, filter_family=[], filter_country=[]):
+    column_map = {"family": "Family", "country": "Country_ID", "feature": "Parameter_ID"}
+    metric_col = column_map.get(metric)
 
     query_df = df.copy()
 
     if filter_family:
         query_df = query_df[query_df["Family"].isin(filter_family)]
-
     if filter_country:
         query_df = query_df[query_df["Country_ID"].isin(filter_country)]
     
-    query_df = query_df[query_df["Parameter_ID"] == feature]
+    if metric == "feature" and feature_id:
+        query_df = query_df[query_df["Parameter_ID"] == feature_id]
 
-    query_df = query_df[[metric, "Number"]]
+    count_series = query_df.groupby(metric_col)["Language_ID"].nunique()
+    
+    count_series = count_series.sort_values(ascending=not descending)
 
-    query_df = query_df.groupby(metric).mean()
-
-    query_df = query_df.sort_values(by="Number", ascending=not descending)
-        
-    return query_df 
-
+    return count_series

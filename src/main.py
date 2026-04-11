@@ -1,36 +1,29 @@
 import argparse
 import sys
 from loader import load_data
-from stats import *
-from plotter import *
+import plotter
+import stats
+import info
 
 def parse_args():
     parser = argparse.ArgumentParser(prog="wals_analyze", description="WALS Data Analysis Tool")
     
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands", required=True)
 
-    # --- average ---
-    parser_average = subparsers.add_parser("average")
-    
-    parser_average.add_argument("by", choices=["family", "country"])
-    parser_average.add_argument("feature")
-
-    parser_average.add_argument("-d", "--descending", action="store_true")
-    
-    parser_average.add_argument("-f", "--filter-family", nargs='+')
-    parser_average.add_argument("-c", "--filter-country", nargs='+')
-
     # --- count ---
-    parser_count = subparsers.add_parser("count")
+    parser_count = subparsers.add_parser("count_languages")
 
-    parser_count.add_argument("metric", choices=["family", "country"])
-    parser_count.add_argument("item", choices=["countries", "families", "languages", "feature_value"])
+    parser_count.add_argument("group", choices=["family", "country", "feature"])
+    parser_count.add_argument("-i", "--feature-id", default=None)
 
     parser_count.add_argument("-d", "--descending", action="store_true")
     
     parser_count.add_argument("-f", "--filter-family", nargs='+')
     parser_count.add_argument("-c", "--filter-country", nargs='+')
     
+    # --- features ---
+    parser_features = subparsers.add_parser("features")
+
     return parser.parse_args()
 
 def main():
@@ -42,20 +35,20 @@ def main():
         print(f"Error: dataset file ({dataset_path}) not found")
         sys.exit(1)
         
-    if args.command == "average":
-        average_frame = average(
+    if args.command == "count_languages":
+        count_series = stats.count(
             df,
-            args.by,
-            args.feature,
+            args.group,
+            feature_id=args.feature_id,
             descending=args.descending,
             filter_family=args.filter_family,
             filter_country=args.filter_country
         )
 
-        plot_average(average_frame)
+        plotter.count_plot(count_series)
     
-    elif args.command == "count":
-        pass
+    elif args.command == "features":
+        info.print_features(df)        
 
 if __name__ == "__main__":
     main()
