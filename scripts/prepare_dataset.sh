@@ -106,6 +106,10 @@ join_all() {
   join "$RAW_DIR/parameters.csv" "Parameter_ID" "ID"
   join "$RAW_DIR/codes.csv" "Code_ID" "ID"
 
+  xan flatmap 'split(Country_ID, " ")' "Country_ID" -r "Country_ID" "$FINAL_PATH" | sponge "$FINAL_PATH"
+  
+  join "$RAW_DIR/countries.csv" "Country_ID" "ID"
+
   echo "[JOIN success]"
 }
 
