@@ -68,9 +68,18 @@ def df_to_gdf(df):
 
     return gdf
 
-def map_feature(df, feature_id):
+def map_points(df, metric, identifier):
     query_df = df.copy()
-    query_df = filter(query_df, "Parameter_ID", [feature_id])
+    
+    filter_by = ""
+    match metric:
+        case "family":
+            filter_by = "Family"
+        case "feature":
+            filter_by = "Parameter_ID"
+
+    query_df = filter(query_df, filter_by, [identifier])
+    query_df.set_index(filter_by)
     return df_to_gdf(query_df)
 
 def map_family(df, family_name):

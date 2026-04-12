@@ -16,19 +16,24 @@ def parse_args():
 
     # --- COUNT  ---
     parser_count = subparsers.add_parser("count")
-    count_subparsers = parser_count.add_subparsers(dest="target", required=True)
+    count_subparsers = parser_count.add_subparsers(dest="count_target", required=True)
 
-    p_countries = count_subparsers.add_parser("countries")
-    p_families = count_subparsers.add_parser("families")
-    p_features = count_subparsers.add_parser("features")
-    p_features.add_argument("feature_id")
+    pc_countries = count_subparsers.add_parser("countries")
+    pc_families = count_subparsers.add_parser("families")
+    pc_features = count_subparsers.add_parser("features")
+    pc_features.add_argument("feature_id")
 
-    for p in [p_countries, p_families, p_features]:
+    for p in [pc_countries, pc_families, pc_features]:
         p.add_argument("-o", "--order", choices=["ascending", "descending"])
 
-    # --- MAP FEATURE ---
-    parser_map_feature = subparsers.add_parser("map_feature")
-    parser_map_feature.add_argument("feature_id")
+    # --- MAP POINTS ---
+    parser_map_points = subparsers.add_parser("map_points")
+    map_points_subparsers = parser_map_points.add_subparsers(dest="map_points_target", required=True)
+
+    mp_family = map_points_subparsers.add_parser("family")
+    mp_family.add_argument("family_name")
+    mp_feature = map_points_subparsers.add_parser("feature")
+    mp_feature.add_argument("feature_id")
 
     # --- FAMILY DENSITY ---
     parser_map_family = subparsers.add_parser("map_family")
@@ -53,7 +58,7 @@ def main():
     if args.command == "count":
         count_df = stats.count(
             df,
-            args.target,
+            args.count_target,
             filter_country=args.filter_country,
             filter_family=args.filter_family,
             order=args.order,
@@ -63,16 +68,20 @@ def main():
         plotter.count_plot(count_df)
         plt.show()
 
-    elif args.command == "map_feature":
-        map = stats.map_feature(df, args.feature_id)
-        plotter.plot_points_on_map(map)
+    elif args.command == "map_points":
+        map = stats.map_points(
+            df,
+            args.map_points_target,
+            args.family_name if args.map_points_target == "family" else args.feature_id
+        )
+
+        plotter.plot_points_on_map(map, "Family" if args.map_points_target == "family" else "Code_Name")
         plt.show()
 
     elif args.command == "map_family":
         map = stats.map_family(df, args.family_name)
         plotter.plot_density_on_map(map)
         plt.show()
-
     
     elif args.command == "info":
         info.print_info(df, args.item)
