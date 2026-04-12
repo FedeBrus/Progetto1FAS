@@ -94,21 +94,7 @@ def main():
 
     
     elif args.command == "info":
-        match args.item:
-            case "features":
-                info.print_features(df)
-            case "countries":
-                info.print_countries(df)
-            case "families":
-                info.print_families(df)
-            case "macroareas":
-                info.print_macroareas(df)
-            case "languages":
-                info.print_languages(df)
-            case "genii":
-                info.print_genii(df)
-            case "subfamilies":
-                info.print_subfamilies(df)
+        info.print_info(df, args.item)
 
 if __name__ == "__main__":
     main()

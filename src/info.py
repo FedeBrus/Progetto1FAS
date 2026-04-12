@@ -1,29 +1,25 @@
 import pandas as pd
 
-def print_features(df):
-    for row in df[['Parameter_ID', 'Parameter_Name']].drop_duplicates().itertuples():
-        print(f"{row.Parameter_ID}: {row.Parameter_Name}")
+def print_info(df, item):
+    cols = []
+    match item:
+        case "languages":
+            cols = ["Language_ID", "Language_Name"]
+        case "families":
+            cols = ["Family"]
+        case "subfamilies":
+            cols = ["Subfamily"]
+        case "genii":
+            cols = ["Genus"]
+        case "features":
+            cols = ["Parameter_ID", "Parameter_Name"]
+        case "countries":
+            cols = ["Country_ID", "Country_Name"]
+        case "macroareas":
+            cols = ["Macroarea"]
 
-def print_countries(df):
-    for row in df[['Country_ID', 'Country_Name']].drop_duplicates().itertuples():
-        print(f"{row.Country_ID}: {row.Country_Name}")
+    print_tuples(df, cols)
 
-def print_families(df):
-    for row in df['Family'].drop_duplicates():
-        print(row)
-
-def print_macroareas(df):
-    for row in df['Macroarea'].drop_duplicates():
-        print(row)
-
-def print_languages(df):
-    for row in df[['Language_ID', 'Language_Name']].drop_duplicates().itertuples():
-        print(f"{row.Language_ID}: {row.Language_Name}")
-
-def print_macroareas(df):
-    for row in df['Genus'].drop_duplicates():
-        print(row)
-
-def print_macroareas(df):
-    for row in df['Subfamily'].drop_duplicates():
-        print(row)
+def print_tuples(df, cols):
+    for row in df[cols].drop_duplicates().values.tolist():
+        print(", ".join(map(str, row)))
