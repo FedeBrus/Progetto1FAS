@@ -27,46 +27,27 @@ def filter(df, column, filter_group=[]):
 
     return query_df
 
-
-def count_by_countries(df, order=None, filter_country=[]):
+def count(df, metric, order=None, feature_id=None, filter_family=[], filter_country=[]):
     query_df = df.copy()
-    count_df = (
-        query_df
-        .groupby(["Country_ID", "Country_Name"])["Language_ID"]
-        .nunique()
-        .reset_index()
-        .rename(columns={"Language_ID": "Language_Count"})
-    )
-
-    count_df = apply_order(count_df, order, "Language_Count")
-
-    count_df = count_df.set_index("Country_Name")
-
-    return count_df
-
-def count_by_families(df, order=None, filter_family=[]):
-    query_df = df.copy()
-
-    count_df = (
-        query_df
-        .groupby(["Family"])["Language_ID"]
-        .nunique()
-        .reset_index()
-        .rename(columns={"Language_ID": "Language_Count"})
-    )
     
-    count_df = apply_order(count_df, order, "Language_Count")
+    query_df = filter(query_df, "Family", filter_family)
+    query_df = filter(query_df, "Country_ID", filter_country)
 
-    count_df = count_df.set_index("Family")
+    if feature_id:
+        query_df = filter(query_df, "Parameter_ID", [feature_id])
+    
+    cols = []
+    match metric:
+        case "families":
+            cols = ["Family"]
+        case "countries":
+            cols = ["Country_Name"]
+        case "features":
+            cols = ["Code_Name"]
 
-    return count_df
-
-def count_by_feature(df, order=None, feature_id=None, filter_family=[], filter_country=[]):
-    query_df = df.copy()        
-    query_df = filter(query_df, "Parameter_ID", [feature_id])
     count_df = (
         query_df
-        .groupby(["Code_ID", "Code_Name"])["Language_ID"]
+        .groupby(cols)["Language_ID"]
         .nunique()
         .reset_index()
         .rename(columns={"Language_ID": "Language_Count"})
@@ -74,7 +55,7 @@ def count_by_feature(df, order=None, feature_id=None, filter_family=[], filter_c
 
     count_df = apply_order(count_df, order, "Language_Count")
 
-    count_df = count_df.set_index("Code_Name")
+    count_df = count_df.set_index(cols)
 
     return count_df
 
@@ -95,5 +76,6 @@ def map_feature(df, feature_id):
 def map_family(df, family_name):
     query_df = df.copy()
     query_df = filter(query_df, "Family", [family_name])
+    query_df = query_df.drop_duplicates(subset=["Language_ID"])
     return df_to_gdf(query_df)
 

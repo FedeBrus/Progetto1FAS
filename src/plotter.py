@@ -45,15 +45,15 @@ def plot_density_on_map(gdf):
         ax=ax,
         fill=True, 
         alpha=0.6,
-        zorder=2,
+        zorder=1,
     )
     
     gdf.plot(
         ax=ax,
         color='black',
-        markersize=2,
-        alpha=0.4,
-        zorder=3
+        markersize=5,
+        alpha=0.8,
+        zorder=2
     )
     
     add_background_map(ax)

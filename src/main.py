@@ -9,33 +9,32 @@ import matplotlib.pyplot as plt
 def parse_args():
     parser = argparse.ArgumentParser(prog="wals_analyze", description="WALS Data Analysis Tool")
     
-    subparsers = parser.add_subparsers(dest="command", help="Available subcommands", required=True)
-
     parser.add_argument("-f", "--filter-family", nargs='+')
     parser.add_argument("-c", "--filter-country", nargs='+')
+    
+    subparsers = parser.add_subparsers(dest="command", help="Available subcommands", required=True)
 
-    # --- count languages by country ---
-    parser_count_by_country = subparsers.add_parser("count_by_countries")
-    parser_count_by_country.add_argument("-o", "--order", choices=["ascending", "descending"]) 
+    # --- COUNT  ---
+    parser_count = subparsers.add_parser("count")
+    count_subparsers = parser_count.add_subparsers(dest="target", required=True)
 
-    # --- count languages by family ---
-    parser_count_by_family = subparsers.add_parser("count_by_families")
-    parser_count_by_family.add_argument("-o", "--order", choices=["ascending", "descending"]) 
+    p_countries = count_subparsers.add_parser("countries")
+    p_families = count_subparsers.add_parser("families")
+    p_features = count_subparsers.add_parser("features")
+    p_features.add_argument("feature_id")
 
-    # --- count feature values ---
-    parser_count_by_feature = subparsers.add_parser("count_by_features")
-    parser_count_by_feature.add_argument("feature_id")
-    parser_count_by_feature.add_argument("-o", "--order", choices=["ascending", "descending"]) 
+    for p in [p_countries, p_families, p_features]:
+        p.add_argument("-o", "--order", choices=["ascending", "descending"])
 
-    # --- map feature ---
+    # --- MAP FEATURE ---
     parser_map_feature = subparsers.add_parser("map_feature")
     parser_map_feature.add_argument("feature_id")
 
-    # --- family density ---
+    # --- FAMILY DENSITY ---
     parser_map_family = subparsers.add_parser("map_family")
     parser_map_family.add_argument("family_name")
 
-    # --- info ---
+    # --- INFO ---
     parser_info = subparsers.add_parser("info")
     parser_info.add_argument("item", choices=["features", "countries", "families", "macroareas", "languages", "genii", "subfamilies"])
 
@@ -51,32 +50,14 @@ def main():
         print(f"Error: dataset file ({dataset_path}) not found")
         sys.exit(1)
 
-    df = stats.filter(df, "Country_ID", args.filter_country)
-    df = stats.filter(df, "Family", args.filter_family)
-        
-    if args.command == "count_by_countries":
-        count_df = stats.count_by_countries(
+    if args.command == "count":
+        count_df = stats.count(
             df,
+            args.target,
+            filter_country=args.filter_country,
+            filter_family=args.filter_family,
             order=args.order,
-        )
-
-        plotter.count_plot(count_df)
-        plt.show()
-
-    elif args.command == "count_by_families":
-        count_df = stats.count_by_families(
-            df,
-            order=args.order,
-        )
-
-        plotter.count_plot(count_df)
-        plt.show()
-
-    elif args.command == "count_by_features":
-        count_df = stats.count_by_feature(
-            df,
-            order=args.order,
-            feature_id=args.feature_id,
+            feature_id=args.feature_id if args.target == "features" else None
         )
 
         plotter.count_plot(count_df)
