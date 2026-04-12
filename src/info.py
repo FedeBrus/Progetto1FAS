@@ -11,3 +11,19 @@ def print_countries(df):
 def print_families(df):
     for row in df['Family'].drop_duplicates():
         print(row)
+
+def print_macroareas(df):
+    for row in df['Macroarea'].drop_duplicates():
+        print(row)
+
+def print_languages(df):
+    for row in df[['Language_ID', 'Language_Name']].drop_duplicates().itertuples():
+        print(f"{row.Language_ID}: {row.Language_Name}")
+
+def print_macroareas(df):
+    for row in df['Genus'].drop_duplicates():
+        print(row)
+
+def print_macroareas(df):
+    for row in df['Subfamily'].drop_duplicates():
+        print(row)

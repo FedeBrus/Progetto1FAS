@@ -1,6 +1,9 @@
 import pandas as pd
 import geopandas
 import geodatasets
+import matplotlib.pyplot as plt
+import seaborn as sns
+import contextily as cx
 
 def order_to_boolean(order):
     if order == "ascending":
@@ -60,7 +63,7 @@ def count_by_families(df, order=None, filter_family=[]):
 
 def count_by_feature(df, order=None, feature_id=None, filter_family=[], filter_country=[]):
     query_df = df.copy()        
-    query_df = filter(query_df, "Paramater_ID", [feature_id])
+    query_df = filter(query_df, "Parameter_ID", [feature_id])
     count_df = (
         query_df
         .groupby(["Code_ID", "Code_Name"])["Language_ID"]
@@ -75,9 +78,22 @@ def count_by_feature(df, order=None, feature_id=None, filter_family=[], filter_c
 
     return count_df
 
-def map():
-    path = geodatasets.get_path('naturalearth.land')
-    world = geopandas.read_file(path)
+def df_to_gdf(df):
+    gdf = geopandas.GeoDataFrame(
+        df,
+        geometry=geopandas.points_from_xy(df.Longitude, df.Latitude),
+        crs="EPSG:4326"
+    )
 
-    return world
+    return gdf
+
+def map_feature(df, feature_id):
+    query_df = df.copy()
+    query_df = filter(query_df, "Parameter_ID", [feature_id])
+    return df_to_gdf(query_df)
+
+def map_family(df, family_name):
+    query_df = df.copy()
+    query_df = filter(query_df, "Family", [family_name])
+    return df_to_gdf(query_df)
 
