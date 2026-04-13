@@ -30,6 +30,7 @@ def parse_args():
     parser_map_points = subparsers.add_parser("map_points")
     map_points_subparsers = parser_map_points.add_subparsers(dest="map_points_target", required=True)
 
+    mp_families_all = map_points_subparsers.add_parser("families")
     mp_family = map_points_subparsers.add_parser("family")
     mp_family.add_argument("family_name")
     mp_feature = map_points_subparsers.add_parser("feature")
@@ -69,14 +70,18 @@ def main():
         plt.show()
 
     elif args.command == "map_points":
-        map = stats.map_points(
-            df,
-            args.map_points_target,
-            args.family_name if args.map_points_target == "family" else args.feature_id
-        )
-
-        plotter.plot_points_on_map(map, "Family" if args.map_points_target == "family" else "Code_Name")
-        plt.show()
+        if args.map_points_target == "families":
+            map = stats.map_all_languages_by_family(df)
+            plotter.plot_points_on_map(map, "Family")
+            plt.show()
+        else:
+            map = stats.map_points(
+                df,
+                args.map_points_target,
+                args.family_name if args.map_points_target == "family" else args.feature_id
+            )
+            plotter.plot_points_on_map(map, "Family" if args.map_points_target == "family" else "Code_Name")
+            plt.show()
 
     elif args.command == "map_family":
         map = stats.map_family(df, args.family_name)

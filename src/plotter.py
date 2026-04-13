@@ -22,17 +22,18 @@ def add_background_map(ax):
     
     world.plot(ax=ax, color='#f0f0f0', edgecolor='#d4d4d4', linewidth=0.5, zorder=0)
 
-def plot_points_on_map(gdf, identifier):
+def plot_points_on_map(gdf, identifier, chunks=None):
     ax = _setup_ax_for_map()
 
     gdf.plot(
         ax=ax,
         column=identifier,
-        cmap="tab10",
+        cmap="tab20",
         legend="True",
         markersize=20,
         alpha=0.8
     )
+
     add_background_map(ax)
     return ax
 

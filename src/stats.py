@@ -88,3 +88,13 @@ def map_family(df, family_name):
     query_df = query_df.drop_duplicates(subset=["Language_ID"])
     return df_to_gdf(query_df)
 
+def map_all_languages_by_family(df):
+    query_df = df.copy()
+    query_df = query_df.drop_duplicates(subset=["Language_ID"])
+    query_df.set_index("Family")
+    return df_to_gdf(query_df)
+
+def get_family_chunks(gdf, chunk_size=20):
+    all_families = sorted(gdf['Family'].unique())
+    chunks = [all_families[i:i + chunk_size] for i in range(0, len(all_families), chunk_size)]
+    return [gdf[gdf['Family'].isin(chunk)] for chunk in chunks]
