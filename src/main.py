@@ -62,7 +62,7 @@ def main():
             filter_country=args.filter_country,
             filter_family=args.filter_family,
             order=args.order,
-            feature_id=args.feature_id if args.target == "features" else None
+            feature_id=args.feature_id if args.count_target == "features" else None
         )
 
         plotter.count_plot(count_df)
