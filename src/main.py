@@ -30,15 +30,20 @@ def parse_args():
     parser_map_points = subparsers.add_parser("map_points")
     map_points_subparsers = parser_map_points.add_subparsers(dest="map_points_target", required=True)
 
-    mp_families_all = map_points_subparsers.add_parser("families")
     mp_family = map_points_subparsers.add_parser("family")
-    mp_family.add_argument("family_name")
+    mp_family.add_argument("family_names", nargs="+")
     mp_feature = map_points_subparsers.add_parser("feature")
     mp_feature.add_argument("feature_id")
 
-    # --- FAMILY DENSITY ---
-    parser_map_family = subparsers.add_parser("map_family")
-    parser_map_family.add_argument("family_name")
+    # --- MAP DENSITY ---
+    parser_map_density = subparsers.add_parser("map_density")
+    map_density_subparsers = parser_map_density.add_subparsers(dest="map_density_target", required=True)
+
+    md_family = map_density_subparsers.add_parser("family")
+    md_family.add_argument("family_names", nargs="+")
+    md_feature = map_density_subparsers.add_parser("feature")
+    md_feature.add_argument("feature_id")
+    md_feature.add_argument("feature_value_name")
 
     # --- INFO ---
     parser_info = subparsers.add_parser("info")
@@ -70,23 +75,32 @@ def main():
         plt.show()
 
     elif args.command == "map_points":
-        if args.map_points_target == "families":
-            map = stats.map_all_languages_by_family(df)
-            plotter.plot_points_on_map(map, "Family")
-            plt.show()
-        else:
+        if args.map_points_target == "family":
             map = stats.map_points(
                 df,
-                args.map_points_target,
-                args.family_name if args.map_points_target == "family" else args.feature_id
+                "Family",
+                args.family_names
             )
-            plotter.plot_points_on_map(map, "Family" if args.map_points_target == "family" else "Code_Name")
+            plotter.plot_points_on_map(map, "Family")
+            plt.show()
+        elif args.map_points_target == "feature":
+            map = stats.map_points(
+                df,
+                "Parameter_ID",
+                [args.feature_id]
+            )
+            plotter.plot_points_on_map(map, "Code_Name")
             plt.show()
 
-    elif args.command == "map_family":
-        map = stats.map_family(df, args.family_name)
-        plotter.plot_density_on_map(map)
-        plt.show()
+    elif args.command == "map_density":
+        if args.map_density_target == "family":
+            map = stats.map_points(
+                df,
+                "Family",
+                args.family_names
+            )
+            plotter.plot_density_on_map(map, "Family")
+            plt.show()
     
     elif args.command == "info":
         info.print_info(df, args.item)

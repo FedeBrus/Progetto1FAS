@@ -27,6 +27,29 @@ def filter(df, column, filter_group=[]):
 
     return query_df
 
+def get_column_values(df, column):
+    return list(df[column].unique())
+
+def get_column_chunks(df, column, chunk_size=20):
+    all_types = get_column_values(df, column)
+    chunks = [all_types[i:i + chunk_size] for i in range(0, len(all_types), chunk_size)]
+    
+    result = [] 
+    
+    for chunk in chunks:
+        result.append(df[df[column].isin(chunk)])
+
+    return result
+
+def df_to_gdf(df):
+    gdf = geopandas.GeoDataFrame(
+        df,
+        geometry=geopandas.points_from_xy(df.Longitude, df.Latitude),
+        crs="EPSG:4326"
+    )
+
+    return gdf
+
 def count(df, metric, order=None, feature_id=None, filter_family=[], filter_country=[]):
     query_df = df.copy()
     
@@ -59,42 +82,10 @@ def count(df, metric, order=None, feature_id=None, filter_family=[], filter_coun
 
     return count_df
 
-def df_to_gdf(df):
-    gdf = geopandas.GeoDataFrame(
-        df,
-        geometry=geopandas.points_from_xy(df.Longitude, df.Latitude),
-        crs="EPSG:4326"
-    )
-
-    return gdf
-
-def map_points(df, metric, identifier):
+def map_points(df, metric, identifiers):
     query_df = df.copy()
-    
-    filter_by = ""
-    match metric:
-        case "family":
-            filter_by = "Family"
-        case "feature":
-            filter_by = "Parameter_ID"
-
-    query_df = filter(query_df, filter_by, [identifier])
-    query_df.set_index(filter_by)
-    return df_to_gdf(query_df)
-
-def map_family(df, family_name):
-    query_df = df.copy()
-    query_df = filter(query_df, "Family", [family_name])
+    query_df = filter(query_df, metric, identifiers)
     query_df = query_df.drop_duplicates(subset=["Language_ID"])
+    query_df.set_index(metric)
     return df_to_gdf(query_df)
 
-def map_all_languages_by_family(df):
-    query_df = df.copy()
-    query_df = query_df.drop_duplicates(subset=["Language_ID"])
-    query_df.set_index("Family")
-    return df_to_gdf(query_df)
-
-def get_family_chunks(gdf, chunk_size=20):
-    all_families = sorted(gdf['Family'].unique())
-    chunks = [all_families[i:i + chunk_size] for i in range(0, len(all_families), chunk_size)]
-    return [gdf[gdf['Family'].isin(chunk)] for chunk in chunks]
