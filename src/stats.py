@@ -50,19 +50,20 @@ def df_to_gdf(df):
 
     return gdf
 
-def count(df, cols, order=None):
+def count(df, col, by, number, order="descending"):
     query_df = df.copy()
 
     count_df = (
         query_df
-        .groupby(cols)["Language_ID"]
+        .groupby(by)[col]
         .nunique()
         .reset_index()
-        .rename(columns={"Language_ID": "Language_Count"})
+        .rename(columns={col: "Count"})
     )
 
-    count_df = apply_order(count_df, order, "Language_Count")
-    count_df = count_df.set_index(cols)
+    count_df = apply_order(count_df, order, "Count")
+    count_df = count_df.head(number)
+    count_df = count_df.set_index(by)
     return count_df
 
 def map_points(df, metric, identifiers):
@@ -71,4 +72,3 @@ def map_points(df, metric, identifiers):
     query_df = query_df.drop_duplicates(subset=["Language_ID"])
     query_df.set_index(metric)
     return df_to_gdf(query_df)
-

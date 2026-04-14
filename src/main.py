@@ -15,7 +15,6 @@ def parse_args():
     subparsers = parser.add_subparsers(dest="command", help="Available subcommands", required=True)
 
     # --- COUNT  ---
-    # TODO: add columns names directly
     parser_count = subparsers.add_parser("count")
     count_subparsers = parser_count.add_subparsers(dest="count_target", required=True)
     
@@ -23,15 +22,9 @@ def parse_args():
     pc_families = count_subparsers.add_parser("family")
     pc_features = count_subparsers.add_parser("feature")
     pc_features.add_argument("feature_id")
-    pc_macroareas = count_subparsers.add_parser("macroarea")
-    pc_subfamily = count_subparsers.add_parser("subfamily")
-    pc_subfamily.add_argument("family_id")
-    pc_genus = count_subparsers.add_parser("genus")
-    pc_genus.add_argument("family_id")
-    pc_genus.add_argument("subfamily_id")
 
-    for p in [pc_countries, pc_families, pc_features, pc_genus, pc_subfamily, pc_macroareas]:
-        p.add_argument("-o", "--order", choices=["ascending", "descending"])
+    parser_count.add_argument("-o", "--order", choices=["ascending", "descending"])
+    parser_count.add_argument("-n", "--number", type=int)
 
     # --- MAP POINTS ---
     parser_map_points = subparsers.add_parser("map_points")
@@ -53,10 +46,11 @@ def parse_args():
     md_feature.add_argument("-v", "--feature_value_name")
 
     # --- INFO ---
-    # TODO: make it so that the column names get passed
-    # TODO: add a method that shows the columns
     parser_info = subparsers.add_parser("info")
-    parser_info.add_argument("item", choices=["features", "countries", "families", "macroareas", "languages", "genii", "subfamilies"])
+    parser_info.add_argument("columns", nargs="+")
+
+    # -- COLUMNS ---
+    parser_cols = subparsers.add_parser("columns")
 
     return parser.parse_args()
 
@@ -85,20 +79,13 @@ def main():
             case "feature":
                 cols = ["Code_Name"]
                 df = stats.filter(df, "Parameter_ID", [args.feature_id])
-            case "macroarea":
-                cols = ["Macroarea"]
-            case "subfamily":
-                cols = ["Family", "Subfamily"]
-                df = stats.filter(df, "Family", [args.family_id])
-            case "genus":
-                cols = ["Family", "Subfamily", "Genus"]
-                df = stats.filter(df, "Family", [args.family_id])
-                df = stats.filter(df, "Subfamily", [args.subfamily_id])
 
         count_df = stats.count(
             df,
+            "Language_ID",
             cols,
-            order=args.order,
+            number=args.number,
+            order=args.order
         )
 
         plotter.count_plot(count_df)
@@ -146,7 +133,10 @@ def main():
             plt.show()
     
     elif args.command == "info":
-        info.print_info(df, args.item)
+        info.print_info(df, args.columns)
+
+    elif args.command == "columns":
+        info.print_columns(df)
 
 if __name__ == "__main__":
     main()
