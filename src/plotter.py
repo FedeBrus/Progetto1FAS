@@ -70,6 +70,7 @@ def plot_density_on_map(gdf, identifier):
         x=gdf.geometry.x, 
         y=gdf.geometry.y,
         ax=ax,
+        common_norm=False,
         hue=identifier,
         cmap="tab20",
         fill=True, 
