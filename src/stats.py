@@ -50,23 +50,8 @@ def df_to_gdf(df):
 
     return gdf
 
-def count(df, metric, order=None, feature_id=None, filter_family=[], filter_country=[]):
+def count(df, cols, order=None):
     query_df = df.copy()
-    
-    query_df = filter(query_df, "Family", filter_family)
-    query_df = filter(query_df, "Country_ID", filter_country)
-
-    if feature_id:
-        query_df = filter(query_df, "Parameter_ID", [feature_id])
-    
-    cols = []
-    match metric:
-        case "families":
-            cols = ["Family"]
-        case "countries":
-            cols = ["Country_Name"]
-        case "features":
-            cols = ["Code_Name"]
 
     count_df = (
         query_df
@@ -77,9 +62,7 @@ def count(df, metric, order=None, feature_id=None, filter_family=[], filter_coun
     )
 
     count_df = apply_order(count_df, order, "Language_Count")
-
     count_df = count_df.set_index(cols)
-
     return count_df
 
 def map_points(df, metric, identifiers):

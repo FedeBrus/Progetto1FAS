@@ -19,7 +19,6 @@ def _setup_ax_for_map(ax=None, figsize=(12, 8)):
 def add_background_map(ax):        
     world_path = geodatasets.get_path('naturalearth.land')
     world = gpd.read_file(world_path)
-    
     world.plot(ax=ax, color='#f0f0f0', edgecolor='#d4d4d4', linewidth=0.5, zorder=0)
 
 def plot_point_chunks_on_map(gdfs, identifier, rows, cols):
@@ -70,6 +69,8 @@ def plot_density_on_map(gdf, identifier):
         x=gdf.geometry.x, 
         y=gdf.geometry.y,
         ax=ax,
+        thresh=0.05,
+        levels=15,
         common_norm=False,
         hue=identifier,
         cmap="tab20",
