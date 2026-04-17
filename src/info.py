@@ -1,18 +1,17 @@
 import pandas as pd
 
-def print_info(df, columns):
-    # Da dataframe ad array numpy a lista python
-    data = df[columns].drop_duplicates().values.tolist()
+def print_columns(df, columns):
+    print(", ".join(columns) + ":")
+    data = df[columns].drop_duplicates()
 
     result = []
-    for row in data:
+    for row in data.values:
         result.append(", ".join(map(str, row)))
 
     for row in sorted(result):
         print(row)
 
-def print_columns(df):
-    # Da dataframe a Index ad array numpy a lista python
-    columns = df.columns.values.tolist()
-    for col in columns:
+def print_headers(df):
+    print("Dataset headers:")
+    for col in df.columns:
         print(col)

@@ -84,9 +84,10 @@ def main():
             df,
             "Language_ID",
             cols,
-            number=args.number,
             order=args.order
         )
+
+        count_df = count_df.head(args.number)
 
         plotter.count_plot(count_df)
         plt.show()
@@ -133,10 +134,10 @@ def main():
             plt.show()
     
     elif args.command == "info":
-        info.print_info(df, args.columns)
+        info.print_columns(df, args.columns)
 
     elif args.command == "columns":
-        info.print_columns(df)
+        info.print_headers(df)
 
 if __name__ == "__main__":
     main()

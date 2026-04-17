@@ -13,34 +13,29 @@ def order_to_boolean(order):
 
     return False
 
+def get_chunks(df, chunk_size):
+    chunks = []
+    n_rows = len(df)
+    
+    for i in range(0, n_rows, chunk_size):
+        chunks.append(df.iloc[i : i + chunk_size])
+        
+    return chunks
+
+# Ordina column in ordine ascendente o discendente
 def apply_order(df, order, column):
-    if order:
-        df = df.sort_values(by=column, ascending=order_to_boolean(order))
-
-    return df
-
-def filter(df, column, filter_group=[]):
     query_df = df.copy()
+    query_df = df.sort_values(by=column, ascending=order_to_boolean(order))
+    return query_df
 
-    if filter_group:
-        query_df = query_df[query_df[column].isin(filter_group)]
+# Filtra le righe che in column hanno un qualche valore filter_group
+def filter(df, column, filter_group):
+    query_df = df.copy()
+    query_df = query_df[query_df[column].isin(filter_group)]
 
     return query_df
 
-def get_column_values(df, column):
-    return list(df[column].unique())
-
-def get_column_chunks(df, column, chunk_size=20):
-    all_types = get_column_values(df, column)
-    chunks = [all_types[i:i + chunk_size] for i in range(0, len(all_types), chunk_size)]
-    
-    result = [] 
-    
-    for chunk in chunks:
-        result.append(df[df[column].isin(chunk)])
-
-    return result
-
+# Trasforma un dataframe in un geodataframe
 def df_to_gdf(df):
     gdf = geopandas.GeoDataFrame(
         df,
@@ -50,7 +45,7 @@ def df_to_gdf(df):
 
     return gdf
 
-def count(df, col, by, number, order="descending"):
+def count(df, col, by, order):
     query_df = df.copy()
 
     count_df = (
@@ -62,7 +57,6 @@ def count(df, col, by, number, order="descending"):
     )
 
     count_df = apply_order(count_df, order, "Count")
-    count_df = count_df.head(number)
     count_df = count_df.set_index(by)
     return count_df
 
