@@ -30,17 +30,26 @@ def bar_plot(series, figsize=(10, 6), title="", xlabel="", ylabel="", annotate=F
 
 def pie_plot(series, figsize=(10, 6), title=""):
     ax = series.plot.pie(
-        figsize=figsize
+        figsize=figsize,
+        startangle=180
     )
 
     plt.title(title, fontsize=16, pad=20, fontweight="bold")
 
     plt.show()
 
-def _setup_ax_for_map(ax=None, figsize=(12, 8)):
-    if ax is None:
-        fig, ax = plt.subplots(figsize=figsize)
-    
+def stacked_bar_plot(series, figsize=(10, 6), title=""):
+    ax = series.plot.bar(
+        figsize=figsize,
+        stacked=True
+    )
+
+    plt.title(title, fontsize=16, pad=20, fontweight="bold")
+
+    plt.show()
+
+def _setup_ax_for_map(figsize=(12, 8)):
+    fig, ax = plt.subplots(figsize=figsize)
     ax.set_axis_off()
     return ax    
 
