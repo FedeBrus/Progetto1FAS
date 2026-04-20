@@ -23,14 +23,16 @@ def get_chunks(df, chunk_size):
     return chunks
 
 def pack_from(df, number):
-    top = qdf.head(n_top)
-    others = qdf.iloc[n_top:]
+    top = df.head(number)
+    others = df.iloc[number:]
 
     if not others.empty:
-        other_series = pd.Series({"Other": others.sum() + previous_other })
-        languages_by_family = pd.concat([top, other_series]).sort_values(ascending=False)
+        other_series = pd.Series({"Other": others.sum()})
+        languages_by_family = pd.concat([top, other_series])
     else:
         languages_by_family = top
+
+    return languages_by_family
 
 # Ordina column in ordine ascendente o discendente
 def apply_order(df, order, column):

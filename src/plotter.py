@@ -30,8 +30,7 @@ def bar_plot(series, figsize=(10, 6), title="", xlabel="", ylabel="", annotate=F
 
 def pie_plot(series, figsize=(10, 6), title=""):
     ax = series.plot.pie(
-        figsize=figsize,
-        startangle=180
+        figsize=figsize
     )
 
     plt.title(title, fontsize=16, pad=20, fontweight="bold")

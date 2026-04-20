@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 
 REMOTE="https://github.com/cldf-datasets/wals.git"
-FILES=("values.csv" "languages.csv" "countries.csv" "codes.csv" "parameters.csv")
+TARGET_FILES=("values.csv" "languages.csv" "countries.csv" "codes.csv" "parameters.csv")
 DATASET_DIR="./dataset"
 CLONED_DIR="./wals_temp"
 
 RAW_DIR="$DATASET_DIR/raw"
 
+# Array associativo per le colonne da mantenere per ciascun file
 declare -A HEADERS
 HEADERS["values.csv"]="Language_ID,Parameter_ID,Code_ID"
 HEADERS["parameters.csv"]="ID,Name"
@@ -14,6 +15,7 @@ HEADERS["languages.csv"]="ID,Name,Latitude,Longitude,Country_ID,Macroarea,Family
 HEADERS["countries.csv"]="ID,Name"
 HEADERS["codes.csv"]="ID,Name,Description,Number"
 
+# Array associativo per il rename delle colonne duplicate
 declare -A RENAMES
 RENAMES["languages.csv"]="Language_Name"
 RENAMES["parameters.csv"]="Parameter_Name"
@@ -25,14 +27,39 @@ FINAL_PATH="$DATASET_DIR/features.csv"
 fetch() {
   echo "Starting fetch..."
 
-  [[ -d "$CLONED_DIR" ]] && rm -rf "$CLONED_DIR"
-  [[ ! -d "$DATASET_DIR" ]] && mkdir -p "$DATASET_DIR" "$RAW_DIR"
+  # Directories already exist
+  if [[ -d "$CLONED_DIR" ]]; then 
+    read -p "$CLONED_DIR already exists, do you want to overwrite it? [y/N]"
 
+    if [[ "$REPLY" =~ ^([Yy][Ee][Ss] | [Yy])$ ]]; then
+        rm -rf "$CLONED_DIR"
+    else 
+        echo "Fetch process was cancelled";
+        exit 1
+    fi
+  fi
+  
+  if [[ -d "$DATASET_DIR" ]]; then
+    # TODO: make this branch a function
+    read -p "$DATASET_DIR already exists, do you want to overwrite it? [y/N]"
+
+    if [[ "$REPLY" =~ ^([Yy][Ee][Ss] | [Yy])$ ]]; then
+        rm -rf "$DATASET_DIR"
+    else 
+        echo "Fetch process was cancelled";
+        exit 1
+    fi
+  else
+    mkdir -p "$DATASET_DIR" "$RAW_DIR"
+  fi
+
+  # Cloning
   echo "Cloning dataset from $REMOTE..."
   git clone "$REMOTE" "$CLONED_DIR"
 
-  echo "Moving dataset's files..."
-  for target in "${FILES[@]}"; do
+  # Moving dataset's TARGET_FILES
+  echo "Moving dataset's TARGET_FILES..."
+  for target in "${TARGET_FILES[@]}"; do
     if [[ -f "$CLONED_DIR/cldf/$target" ]]; then
       echo "Moving $target in $RAW_DIR..."
       mv "$CLONED_DIR/cldf/$target" "$RAW_DIR/"
@@ -47,28 +74,30 @@ fetch() {
 prune() {
   echo "Starting prune..."
 
+  # $DATASET_DIR doesn't exist
   if [[ ! -d "$DATASET_DIR" ]]; then
     echo "Error: Directory $DATASET_DIR not found. Execute 'fetch' first."
     exit 1
-  elif [[ ! -d "$RAW_DIR" ]]; then
+  fi
+
+  # $RAW_DIR doesn't exist
+  if [[ ! -d "$RAW_DIR" ]]; then
     echo "Error: Directory $RAW_DIR not found. Execute 'fetch' first."
     exit 1
   fi
 
-  for file in "${FILES[@]}"; do
+  for file in "${TARGET_FILES[@]}"; do
     if [[ -f "$RAW_DIR/$file" ]]; then
       cols=${HEADERS[$file]}
 
       if [[ -n $cols ]]; then
         echo "Pruning $file (keeping: $cols)..."
 
-        xan select "$cols" "$RAW_DIR/$file" | {
-          if [[ -n "${RENAMES[$file]}" ]]; then
-            xan rename "${RENAMES[$file]}" -s "Name"
-          else
-            cat
-          fi
-        } | sponge "$RAW_DIR/$file"
+        if [[ -n "${RENAMES[$file]}" ]]; then
+          xan select "$cols" "$RAW_DIR/$file" | xan rename "${RENAMES[$file]}" -s "Name" | sponge "$RAW_DIR/$file"
+        else
+          xan select "$cols" "$RAW_DIR/$file" | sponge "$RAW_DIR/$file"
+        fi
       else
         echo "Error: No headers were specified for this file"
         exit 1
@@ -86,17 +115,21 @@ join() {
 
   echo "Joining $FINAL_PATH with $file on ($on_left = $on_right)..."
 
-  xan join "$on_left" "$FINAL_PATH" "$on_right" "$file" |
-    xan select "!$on_right" |
-    sponge "$FINAL_PATH"
+  xan join "$on_left" "$FINAL_PATH" "$on_right" "$file" | xan select "!$on_right" | sponge "$FINAL_PATH"
 }
 
 join_all() {
   echo "Starting join..."
 
-  if [[ -e "$FINAL_PATH" ]]; then
-    echo "Error: $FINAL_PATH already exists"
-    exit 1
+  if [[ -f "$FINAL_PATH" ]]; then
+    read -p "$FINAL_PATH already exists, do you want to overwrite it? [y/N]"
+
+    if [[ "$REPLY" =~ ^([Yy][Ee][Ss] | [Yy])$ ]]; then
+        rm -rf "$FINAL_PATH"
+    else 
+        echo "Fetch process was cancelled";
+        exit 1
+    fi
   fi
 
   echo "Copying values.csv into $FINAL_PATH..."
@@ -119,16 +152,16 @@ usage() {
 }
 
 case "$1" in
-fetch)
-  fetch
-  ;;
-prune)
-  prune
-  ;;
-join)
-  join_all
-  ;;
-*)
-  usage
-  ;;
+  fetch)
+    fetch
+    ;;
+  prune)
+    prune
+    ;;
+  join)
+    join_all
+    ;;
+  *)
+    usage
+    ;;
 esac
