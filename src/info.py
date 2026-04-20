@@ -1,6 +1,6 @@
 import pandas as pd
 
-def print_columns(df, columns):
+def get_columns(df, columns):
     print(", ".join(columns) + ":")
     data = df[columns].drop_duplicates()
 
@@ -9,7 +9,7 @@ def print_columns(df, columns):
         result.append(", ".join(map(str, row)))
 
     for row in sorted(result):
-        print(row)
+      print(row)
 
 def print_headers(df):
     print("Dataset headers:")

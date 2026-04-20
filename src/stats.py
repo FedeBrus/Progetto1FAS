@@ -46,6 +46,12 @@ def filter(df, column, filter_group):
     query_df = query_df[query_df[column].isin(filter_group)]
 
     return query_df
+  
+def filter_out(df, column, filter_group):
+    query_df = df.copy()
+    query_df = query_df[~query_df[column].isin(filter_group)]
+
+    return query_df
 
 # Trasforma un dataframe in un geodataframe
 def df_to_gdf(df):

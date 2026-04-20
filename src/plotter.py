@@ -37,15 +37,36 @@ def pie_plot(series, figsize=(10, 6), title=""):
 
     plt.show()
 
-def stacked_bar_plot(series, figsize=(10, 6), title=""):
+def stacked_bar_plot(series, figsize=(10, 6), title="", legend=True):
     ax = series.plot.bar(
         figsize=figsize,
-        stacked=True
+        stacked=True,
+        legend=legend
     )
 
     plt.title(title, fontsize=16, pad=20, fontweight="bold")
 
     plt.show()
+
+
+def scatter_plot(df, figsize=(10, 10), x="Family", y="Language_ID", annotate=False):
+  ax = df.plot.scatter(
+    figsize=figsize, 
+    x="Family", 
+    y="Language_ID"
+  )
+
+  if annotate: 
+    for k, v in df.iterrows():
+      ax.annotate(
+        k,
+        (v[x], v[y]),
+        xytext=(5, 5),               
+        textcoords='offset points',
+        fontsize=9
+      )
+
+  plt.show()
 
 def _setup_ax_for_map(figsize=(12, 8)):
     fig, ax = plt.subplots(figsize=figsize)
