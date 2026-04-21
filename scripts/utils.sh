@@ -22,7 +22,7 @@ RENAMES["parameters.csv"]="Parameter_Name"
 RENAMES["codes.csv"]="Code_Name"
 RENAMES["countries.csv"]="Country_Name"
 
-FINAL_PATH="$DATASET_DIR/features.csv"
+FINAL_PATH="$PROCESSED_DIR/features.csv"
 
 prompt_for_overwrite() {
   dir=$1
