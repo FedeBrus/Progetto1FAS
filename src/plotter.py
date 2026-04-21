@@ -68,6 +68,14 @@ def scatter_plot(df, figsize=(10, 10), x="Family", y="Language_ID", annotate=Fal
 
   plt.show()
 
+def plot_heatmap(qdf, figsize=(10, 10), annotate=False, title="", xlabel="", ylabel=""):
+  plt.figure(figsize=figsize)
+  sns.heatmap(qdf, annot=True, fmt='d', cmap='viridis')
+  plt.title(title)
+  plt.ylabel(ylabel)
+  plt.xlabel(xlabel)
+
+plt.show()
 def _setup_ax_for_map(figsize=(12, 8)):
     fig, ax = plt.subplots(figsize=figsize)
     ax.set_axis_off()
