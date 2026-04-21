@@ -31,7 +31,7 @@ fetch() {
   if [[ -d "$CLONED_DIR" ]]; then 
     read -p "$CLONED_DIR already exists, do you want to overwrite it? [y/N]"
 
-    if [[ "$REPLY" =~ ^([Yy][Ee][Ss] | [Yy])$ ]]; then
+    if [[ "$REPLY" =~ ^([Yy][Ee][Ss]|[Yy])$ ]]; then
         rm -rf "$CLONED_DIR"
     else 
         echo "Fetch process was cancelled";
@@ -43,7 +43,7 @@ fetch() {
     # TODO: make this branch a function
     read -p "$DATASET_DIR already exists, do you want to overwrite it? [y/N]"
 
-    if [[ "$REPLY" =~ ^([Yy][Ee][Ss] | [Yy])$ ]]; then
+    if [[ "$REPLY" =~ ^([Yy][Ee][Ss]|[Yy])$ ]]; then
         rm -rf "$DATASET_DIR"
     else 
         echo "Fetch process was cancelled";
@@ -124,7 +124,7 @@ join_all() {
   if [[ -f "$FINAL_PATH" ]]; then
     read -p "$FINAL_PATH already exists, do you want to overwrite it? [y/N]"
 
-    if [[ "$REPLY" =~ ^([Yy][Ee][Ss] | [Yy])$ ]]; then
+    if [[ "$REPLY" =~ ^([Yy][Ee][Ss]|[Yy])$ ]]; then
         rm -rf "$FINAL_PATH"
     else 
         echo "Fetch process was cancelled";
