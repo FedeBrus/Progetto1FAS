@@ -26,11 +26,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-RUN chmod +x ./scripts/prepare_dataset.sh
+RUN chmod +x ./scripts/*.sh
 
-RUN ./scripts/prepare_dataset.sh fetch
-RUN ./scripts/prepare_dataset.sh prune
-RUN ./scripts/prepare_dataset.sh join 
+
+RUN ./scripts/fetch.sh -y
+RUN ./scripts/prune.sh
+RUN ./scripts/join.sh
 
 EXPOSE 8888
 

@@ -2,7 +2,8 @@
 
 REMOTE="https://github.com/cldf-datasets/wals.git"
 TARGET_FILES=("values.csv" "languages.csv" "countries.csv" "codes.csv" "parameters.csv")
-DATASET_DIR="../dataset"
+SCRIPT_DIR=$(dirname "$0")
+DATASET_DIR="$SCRIPT_DIR/../dataset"
 TMP_DIR="$DATASET_DIR/tmp"
 PROCESSED_DIR="$DATASET_DIR/processed"
 RAW_DIR="$DATASET_DIR/raw"
