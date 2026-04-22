@@ -15,8 +15,9 @@ def get_chunks(df, chunk_size):
     return chunks
 
 def pack_from(df, number):
-    top = df.head(number)
-    others = df.iloc[number:]
+    keep = number - 1 
+    top = df.iloc[:keep]
+    others = df.iloc[keep:]
 
     if not others.empty:
         other_series = pd.Series({"Other": others.sum()})
@@ -33,9 +34,9 @@ def filter(df, column, filter_group):
 
     return query_df
   
-def filter_out(df, column, filter_group):
+def filter_out(df, column, filter_out_group):
     query_df = df.copy()
-    query_df = query_df[~query_df[column].isin(filter_group)]
+    query_df = query_df[~query_df[column].isin(filter_out_group)]
 
     return query_df
 
@@ -49,19 +50,18 @@ def df_to_gdf(df):
 
     return gdf
 
-def count(df, col, by, order):
+def count(df, what, by, sort=False):
     query_df = df.copy()
 
     count_df = (
         query_df
-        .groupby(by)[col]
+        .groupby(by)[what]
         .nunique()
-        .reset_index()
-        .rename(columns={col: "Count"})
     )
 
-    count_df = apply_order(count_df, order, "Count")
-    count_df = count_df.set_index(by)
+    if sort:
+      count_df = count_df.sort_values(ascending=False)
+    
     return count_df
 
 def map_points(df, metric, identifiers):

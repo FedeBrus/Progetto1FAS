@@ -25,7 +25,7 @@ def bar_plot(series, figsize=(10, 10), title="", xlabel="", ylabel="", annotate=
                 fontsize=12
             )
 
-    plt.show()
+    plt.close()
 
 def pie_plot(series, figsize=(10, 6), title=""):
     total = series.sum()
@@ -33,19 +33,18 @@ def pie_plot(series, figsize=(10, 6), title=""):
     ax = series.plot.pie(figsize=figsize, labels=labels)
 
     plt.title(title, fontsize=16, pad=20, fontweight="bold")
-
-    plt.show()
+    plt.close()
 
 def stacked_bar_plot(series, figsize=(10, 6), title="", legend=True):
     ax = series.plot.bar(
         figsize=figsize,
         stacked=True,
-        legend=legend
+        legend=legend,
+        cmap="tab20"
     )
 
     plt.title(title, fontsize=16, pad=20, fontweight="bold")
-
-    plt.show()
+    plt.close()
 
 
 def scatter_plot(df, figsize=(10, 10), x="Family", y="Language_ID", annotate=False):
@@ -64,17 +63,19 @@ def scatter_plot(df, figsize=(10, 10), x="Family", y="Language_ID", annotate=Fal
         textcoords='offset points',
         fontsize=9
       )
-
-  plt.show()
+  
+  plt.close()
 
 def plot_heatmap(qdf, figsize=(10, 10), annotate=False, title="", xlabel="", ylabel=""):
-  plt.figure(figsize=figsize)
-  sns.heatmap(qdf, annot=True, fmt='d', cmap='viridis')
+  fig, ax = plt.subplots(figsize=figsize)
+  sns.heatmap(qdf, annot=True, fmt='d', cmap='viridis', ax=ax)
   plt.title(title)
   plt.ylabel(ylabel)
   plt.xlabel(xlabel)
 
-plt.show()
+  plt.show()
+  plt.close(fig)
+
 def _setup_ax_for_map(figsize=(12, 8)):
     fig, ax = plt.subplots(figsize=figsize)
     ax.set_axis_off()
