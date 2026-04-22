@@ -28,7 +28,6 @@ COPY . .
 
 RUN chmod +x ./scripts/*.sh
 
-
 RUN ./scripts/fetch.sh -y
 RUN ./scripts/prune.sh
 RUN ./scripts/join.sh
