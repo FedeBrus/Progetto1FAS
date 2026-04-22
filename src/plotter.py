@@ -4,34 +4,33 @@ import geopandas as gpd
 import contextily as cx
 import seaborn as sns
 
-def bar_plot(series, figsize=(10, 6), title="", xlabel="", ylabel="", annotate=False):
+def bar_plot(series, figsize=(10, 10), title="", xlabel="", ylabel="", annotate=False):
     ax = series.plot.bar(
         figsize=figsize,
         edgecolor="black"
     )
 
-    plt.title(title, fontsize=16, pad=20, fontweight="bold")
-    plt.xlabel(xlabel, fontsize=12)
-    plt.ylabel(ylabel, fontsize=12)
+    plt.title(title, fontsize=16, fontweight="bold")
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
     plt.grid(axis="y", linestyle="--", alpha=0.6)
 
     if annotate:
         for p in ax.patches:
             ax.annotate(
                 str(p.get_height()), 
-                (p.get_x() + p.get_width() / 2., p.get_height() / 2), 
-                ha="center", 
-                va="center",
-                fontsize=10,
-                fontweight="bold"
+                (p.get_x() + p.get_width() / 2.0, p.get_height()), 
+                ha="center",
+                va="bottom",
+                fontsize=12
             )
 
     plt.show()
 
 def pie_plot(series, figsize=(10, 6), title=""):
-    ax = series.plot.pie(
-        figsize=figsize
-    )
+    total = series.sum()
+    labels = [f'{label} ({val/total:.1%})' for label, val in series.items()]
+    ax = series.plot.pie(figsize=figsize, labels=labels)
 
     plt.title(title, fontsize=16, pad=20, fontweight="bold")
 
@@ -116,6 +115,7 @@ def plot_density_on_map(gdf, identifier):
         fill=True, 
         alpha=0.6,
         zorder=1,
+        warn_singular=False
     )
     
     gdf.plot(
