@@ -5,14 +5,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import contextily as cx
 
-def order_to_boolean(order):
-    if order == "ascending":
-        return True
-    elif order == "descending":
-        return False
-
-    return False
-
 def get_chunks(df, chunk_size):
     chunks = []
     n_rows = len(df)
@@ -33,12 +25,6 @@ def pack_from(df, number):
         languages_by_family = top
 
     return languages_by_family
-
-# Ordina column in ordine ascendente o discendente
-def apply_order(df, order, column):
-    query_df = df.copy()
-    query_df = df.sort_values(by=column, ascending=order_to_boolean(order))
-    return query_df
 
 # Filtra le righe che in column hanno un qualche valore filter_group
 def filter(df, column, filter_group):
