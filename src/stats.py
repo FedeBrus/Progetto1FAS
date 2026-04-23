@@ -14,6 +14,9 @@ def get_chunks(df, chunk_size):
         
     return chunks
 
+def get_list_of(df, column):
+    return sorted(df[column].unique().tolist())
+
 def pack_from(df, number):
     keep = number - 1 
     top = df.iloc[:keep]
