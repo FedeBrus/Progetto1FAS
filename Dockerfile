@@ -3,9 +3,10 @@ FROM ubuntu:24.04
 WORKDIR /usr/local/wals_analysis
 
 # Installa ansible
-RUN apt-get update && apt-get install -y \
-  ansible \
-  && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+  apt-get install -y ansible && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
