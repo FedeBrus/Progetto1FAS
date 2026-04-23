@@ -48,11 +48,11 @@ def stacked_bar_plot(series, figsize=(10, 6), title="", legend=True):
     plt.show()
 
 
-def scatter_plot(df, figsize=(10, 10), x="Family", y="Language_ID", annotate=False):
+def scatter_plot(df, x, y, figsize=(10, 10), annotate=False):
   ax = df.plot.scatter(
     figsize=figsize, 
-    x="Family", 
-    y="Language_ID"
+    x=x, 
+    y=y
   )
 
   if annotate: 
@@ -97,33 +97,5 @@ def plot_points_on_map(gdf, identifier):
         alpha=0.8
     )
 
-    add_background_map(ax)
-    return ax
-
-def plot_density_on_map(gdf, identifier):
-    ax = _setup_ax_for_map()
-
-    sns.kdeplot(
-        data=gdf,
-        x=gdf.geometry.x, 
-        y=gdf.geometry.y,
-        ax=ax,
-        thresh=0.05,
-        levels=15,
-        common_norm=False,
-        hue=identifier,
-        fill=True, 
-        alpha=0.6,
-        zorder=1,
-        warn_singular=False
-    )
-    
-    gdf.plot(
-        ax=ax,
-        color="black",
-        markersize=5,
-        zorder=2
-    )
-    
     add_background_map(ax)
     return ax

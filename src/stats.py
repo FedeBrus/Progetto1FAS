@@ -2,7 +2,6 @@ import pandas as pd
 import geopandas
 import geodatasets
 import matplotlib.pyplot as plt
-import seaborn as sns
 import contextily as cx
 
 def get_chunks(df, chunk_size):
