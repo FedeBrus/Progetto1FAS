@@ -10,7 +10,7 @@ def bar_plot(series, figsize=(10, 10), title="", xlabel="", ylabel="", annotate=
         edgecolor="black"
     )
 
-    plt.title(title, fontsize=16, fontweight="bold")
+    plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.grid(axis="y", linestyle="--", alpha=0.6)
@@ -32,27 +32,26 @@ def pie_plot(series, figsize=(10, 6), title=""):
     labels = [f'{label} ({val/total:.1%})' for label, val in series.items()]
     ax = series.plot.pie(figsize=figsize, labels=labels)
 
-    plt.title(title, fontsize=16, pad=20, fontweight="bold")
-
+    plt.title(title)
     plt.show()
 
 def stacked_bar_plot(series, figsize=(10, 6), title="", legend=True):
     ax = series.plot.bar(
         figsize=figsize,
         stacked=True,
-        legend=legend
+        legend=legend,
+        title=title
     )
-
-    plt.title(title, fontsize=16, pad=20, fontweight="bold")
 
     plt.show()
 
 
-def scatter_plot(df, x, y, figsize=(10, 10), annotate=False):
+def scatter_plot(df, x, y, figsize=(10, 10), annotate=False, title=""):
   ax = df.plot.scatter(
     figsize=figsize, 
     x=x, 
-    y=y
+    y=y,
+    title=title
   )
 
   if annotate: 
@@ -60,9 +59,8 @@ def scatter_plot(df, x, y, figsize=(10, 10), annotate=False):
       ax.annotate(
         k,
         (v[x], v[y]),
-        xytext=(5, 5),               
-        textcoords='offset points',
-        fontsize=9
+        xytext=(3, 3),               
+        textcoords='offset points'
       )
 
   plt.show()
@@ -74,7 +72,9 @@ def plot_heatmap(qdf, figsize=(10, 10), annotate=False, title="", xlabel="", yla
   plt.ylabel(ylabel)
   plt.xlabel(xlabel)
 
-plt.show()
+  plt.show()
+
+
 def _setup_ax_for_map(figsize=(12, 8)):
     fig, ax = plt.subplots(figsize=figsize)
     ax.set_axis_off()

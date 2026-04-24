@@ -62,7 +62,7 @@ def count(df, what, by, sort=False):
     )
 
     if sort:
-      count_df = count_df.sort_values(ascending=False)
+      count_df = count_df.sort_values(what, ascending=False)
     
     return count_df
 
