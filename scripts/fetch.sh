@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 source "$(dirname "$0")/utils.sh"
 
@@ -10,9 +10,11 @@ print_usage() {
 
 while getopts 'y' flag; do
   case "${flag}" in
-    y) y_flag=1 ;;
-    *) print_usage $0
-       exit 1 ;;
+  y) y_flag=1 ;;
+  *)
+    print_usage $0
+    exit 1
+    ;;
   esac
 done
 
@@ -22,7 +24,7 @@ echo "Starting fetch..."
 if prompt_for_overwrite "$DATASET_DIR"; then
   echo "Creating dataset directory..."
   mkdir -p "$DATASET_DIR" "$RAW_DIR" "$PROCESSED_DIR"
-else 
+else
   echo "ERROR: Dataset directory preservation was requested, aborting fetch..."
   exit 1
 fi
@@ -56,4 +58,3 @@ done
 echo "Removing temporary $TMP_DIR folder..."
 rm -rf "$TMP_DIR"
 echo "[FETCH success]"
-

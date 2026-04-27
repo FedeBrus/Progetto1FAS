@@ -1,0 +1,16 @@
+---
+- name: Download and extract xan binary
+  ansible.builtin.unarchive:
+    src: "{{ xan_url }}"
+    dest: /usr/local/bin
+    remote_src: true
+    creates: /usr/local/bin/xan
+  become: true
+
+- name: Setup binary permissions
+  ansible.builtin.file:
+    path: /usr/local/bin/xan
+    mode: '0755'
+    owner: root
+    group: root
+  become: true

@@ -1,0 +1,9 @@
+---
+- name: Install system dependencies
+  ansible.builtin.include_tasks: system_packages.yml
+
+- name: Setup xan binary
+  ansible.builtin.include_tasks: xan_install.yml
+
+- name: Setup Python environment
+  ansible.builtin.include_tasks: python_setup.yml

@@ -1,0 +1,8 @@
+---
+- name: Install required system packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages }}"
+  become: true
+

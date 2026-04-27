@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 REMOTE="https://github.com/cldf-datasets/wals.git"
 TARGET_FILES=("values.csv" "languages.csv" "countries.csv" "codes.csv" "parameters.csv")
@@ -31,8 +31,8 @@ prompt_for_overwrite() {
   if [[ -e "$dir" ]]; then
 
     if [[ "$y_flag" -eq 1 ]]; then
-        rm -rf "$dir"
-        return 0
+      rm -rf "$dir"
+      return 0
     fi
 
     read -p "$dir already exists, do you want to overwrite it? [y/N] "
@@ -45,4 +45,4 @@ prompt_for_overwrite() {
   fi
 
   return 0
-} 
+}

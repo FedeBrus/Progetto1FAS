@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 source "$(dirname "$0")/utils.sh"
 
@@ -31,3 +31,4 @@ xan flatmap 'split(Country_ID, " ")' "Country_ID" -r "Country_ID" "$FINAL_PATH" 
 join "$RAW_DIR/countries.csv" "Country_ID" "ID"
 
 echo "[JOIN success]"
+

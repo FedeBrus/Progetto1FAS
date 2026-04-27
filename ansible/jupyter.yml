@@ -1,0 +1,6 @@
+---
+- name: Setup jupyter environment
+  hosts: local
+  gather_facts: true
+  roles:
+    - setup_wals_analysis

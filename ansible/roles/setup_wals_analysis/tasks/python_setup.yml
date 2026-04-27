@@ -1,0 +1,7 @@
+---
+- name: Set up Python virtual environment and dependencies
+  ansible.builtin.pip:
+    requirements: "{{ workdir_path }}/requirements.txt"
+    virtualenv: "{{ workdir_path }}/.venv"
+    virtualenv_command: python3 -m venv
+
