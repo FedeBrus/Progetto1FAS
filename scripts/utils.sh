@@ -14,7 +14,7 @@ HEADERS["values.csv"]="Language_ID,Parameter_ID,Code_ID"
 HEADERS["parameters.csv"]="ID,Name"
 HEADERS["languages.csv"]="ID,Name,Latitude,Longitude,Country_ID,Macroarea,Family,Subfamily,Genus"
 HEADERS["countries.csv"]="ID,Name"
-HEADERS["codes.csv"]="ID,Name,Description,Number"
+HEADERS["codes.csv"]="ID,Name"
 
 # Array associativo per il rename delle colonne duplicate
 declare -A RENAMES
