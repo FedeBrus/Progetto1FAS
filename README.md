@@ -1,7 +1,8 @@
 # Progetto1FAS
 
 Il progetto proposto consiste in un'analisi dati applicata a un dataset di tipologia linguistica.
-Il dataset utilizzato è il (WALS)[https://wals.info/], un dataset che contiene/riguardante ...
+Il dataset utilizzato è il [WALS](https://wals.info/), una dei più grandi dataset di tipologia linguistica.
+Esso raccoglie informazioni riguardanti le proprietà strutturali di un ampio campione di lingue mondiali.
 
 ## Tecnologie utilizzate
 
@@ -27,14 +28,14 @@ alcune implementazioni possano risultare artificialmente elaborate.
 
 ## Dipendenze del progetto
 
-Per il progetto è necessaria l'installazione di Git e Docker.
+Per avviare il progetto è necessaria l'installazione di Git e Docker.
 
 ## Avvio
 
 - Clonazione della repository:
 
 ```bash
-git clone [https://github.com/FedeBrus/Progetto1FAS](https://github.com/FedeBrus/Progetto1FAS)
+git clone https://github.com/FedeBrus/Progetto1FAS
 ```
 
 - Build dell'immagine di progetto:
@@ -59,7 +60,7 @@ tra cui documentazione ufficiale, forum (nello specifico StackOverflow) e LLM (i
 Ogni risposta trovata su forum o generata da LLM è stato oggetto di verifica e comparazione con la documentazione ufficiale.
 Strumenti basati su LLM sono stati utilizzati principalmente per navigare le librerie di python mai prima utilizzate dal sottoscritto.
 
-Per il progetto è stata creata una repository Github a questo (link)[https://github.com/FedeBrus/Progetto1FAS].
+Per il progetto è stata creata una repository Github a questo [link](https://github.com/FedeBrus/Progetto1FAS).
 La git history, sebbene contenga qualche branch, è molto lineare, dato che questo progetto non ha visto
 la collaborazione di più membri.
 
@@ -95,8 +96,8 @@ Questi espongono diverse funzioni di utility per il caricamento del dataset e la
 
 ### Jupyter
 L'attività di analisi è distribuita in cinque notebook:
-  - Part0: disamina del contenuto del dataset.
-  - Part1: elaborazioni statistiche sulle lingue, categorizzate per regioni geografiche e affiliazioni genealogiche.
+  - Part0: esposizione della struttura del dataset.
+  - Part1: elaborazioni statistiche sulle lingue, categorizzate per regioni geografiche e rapporti genealogiche.
   - Part2: analisi dei valori assunti da determinati parametri in relazione alle regioni geografiche e alle diramazioni genealogiche.
-  - Part3: visualizzazione della distribuzione geospaziale delle lingue e dei relativi valori parametrici.
-  - Part4: analisi delle correlazioni incrociate tra i valori dei parametri presi in esame.
+  - Part3: visualizzazione della distribuzione geografica delle lingue e dei relativi valori parametrici.
+  - Part4: analisi della distribuzione incrociata tra i valori dei parametri.
