@@ -10,11 +10,10 @@ COPY . .
 
 RUN ansible-playbook -i ./ansible/hosts ./ansible/jupyter.yml -c local
 
+RUN apt-get purge -y ansible
 RUN chmod +x ./scripts/*.sh
+RUN ./scripts/fetch.sh -y && ./scripts/prune.sh && ./scripts/join.sh
 
-RUN ./scripts/fetch.sh -y
-RUN ./scripts/prune.sh
-RUN ./scripts/join.sh
 
 EXPOSE 8888
 ENV PATH="/usr/local/wals_analysis/.venv/bin:$PATH"
