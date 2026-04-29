@@ -1,6 +1,7 @@
 # Progetto1FAS
 
-Il progetto proposto consiste in un'analisi computazionale applicata a un dataset di tipologia linguistica.
+Il progetto proposto consiste in un'analisi dati applicata a un dataset di tipologia linguistica.
+Il dataset utilizzato è il (WALS)[https://wals.info/], un dataset che contiene/riguardante ...
 
 ## Tecnologie utilizzate
 
@@ -21,12 +22,12 @@ Le tecnologie impiegate nel workflow sono:
 
 Sebbene l'adozione di alcune di queste tecnologie possa apparire sovradimensionata rispetto alla scala del progetto,
 si è scelto di integrarne il maggior numero tra quelle esaminate durante il corso.
-Tale approccio permette di condensare in un unico output le competenze maturate nella prima metà dell'insegnamento,
-pur consapevoli che alcune implementazioni possano risultare volutamente elaborate.
+Tale approccio permette di condensare nel progetto gli argomenti trattati a lezione nonostante
+alcune implementazioni possano risultare artificialmente elaborate.
 
 ## Dipendenze del progetto
 
-Per l'inizializzazione del progetto è necessaria l'installazione preventiva di Git e Docker.
+Per il progetto è necessaria l'installazione di Git e Docker.
 
 ## Avvio
 
@@ -39,112 +40,61 @@ git clone [https://github.com/FedeBrus/Progetto1FAS](https://github.com/FedeBrus
 - Build dell'immagine di progetto:
 
 ```bash
-docker build --network=host -t wals .
+docker build -t wals-analysis .
 ```
 
 - Esecuzione del container:
 
 ```bash
-docker run --rm -p 8888:8888 wals
+docker run -p 8888:8888 wals-analysis
 ```
 
 Una volta avviato, il container eseguirà JupyterLab e genererà un token di autenticazione;
-sarà sufficiente copiare il link prodotto all'interno di un browser per accedere all'ambiente di lavoro e ai notebook.
+sarà sufficiente copiare il link prodotto all'interno di un browser per accedere ai notebook.
 
 ### Sviluppo
 
-Il progetto è stato sviluppato mediante l'ausilio di Git e VSCode. Durante le fasi di implementazione si è fatto ricorso a risorse online,
-tra cui documentazione ufficiale, forum tecnici (nello specifico StackOverflow) e strumenti basati su LLM (in particolare Gemini).
-Ogni riferimento esterno è stato oggetto di cross-referencing con la documentazione ufficiale per garantirne l'accuratezza.
+Il progetto è stato sviluppato con l'utilizzo di Git e VSCode. Durante le fasi di implementazione si è fatto ricorso a risorse online,
+tra cui documentazione ufficiale, forum (nello specifico StackOverflow) e LLM (in particolare Gemini).
+Ogni risposta trovata su forum o generata da LLM è stato oggetto di verifica e comparazione con la documentazione ufficiale.
+Strumenti basati su LLM sono stati utilizzati principalmente per navigare le librerie di python mai prima utilizzate dal sottoscritto.
 
-// Storia dei branch
-
-\newpage
-
-### Struttura del progetto
-
-```  
-.
-├── ansible
-│   ├── hosts
-│   ├── jupyter.yml
-│   └── roles
-│       └── setup_wals_analysis
-│           ├── tasks
-│           │   ├── main.yml
-│           │   ├── python_setup.yml
-│           │   ├── system_packages.yml
-│           │   └── xan_install.yml
-│           └── vars
-│               └── main.yml
-├── dataset
-│   ├── processed
-│   │   └── features.csv
-│   └── raw
-│       ├── codes.csv
-│       ├── countries.csv
-│       ├── languages.csv
-│       ├── parameters.csv
-│       └── values.csv
-├── Dockerfile
-├── notebooks
-│   ├── Part0.ipynb
-│   ├── Part1.ipynb
-│   ├── Part2.ipynb
-│   ├── Part3.ipynb
-│   └── Part4.ipynb
-├── output.pdf
-├── README.md
-├── requirements.txt
-├── scripts
-│   ├── fetch.sh
-│   ├── join.sh
-│   ├── prune.sh
-│   └── utils.sh
-└── src
-    ├── __init__.py
-    ├── __pycache__
-    │   ├── info.cpython-314.pyc
-    │   ├── loader.cpython-314.pyc
-    │   ├── plotter.cpython-314.pyc
-    │   └── stats.cpython-314.pyc
-    ├── info.py
-    ├── loader.py
-    ├── plotter.py
-    └── stats.py
-```
+Per il progetto è stata creata una repository Github a questo (link)[https://github.com/FedeBrus/Progetto1FAS].
+La git history, sebbene contenga qualche branch, è molto lineare, dato che questo progetto non ha visto
+la collaborazione di più membri.
 
 ### Script Bash
 
-Sono stati predisposti tre script Bash deputati alle operazioni di recupero del dataset da GitHub (fetch.sh),
-alla potatura (pruning) dei dati non funzionali all'analisi (prune.sh) e, infine, alla denormalizzazione del dataset (join.sh)
-per consentire l'operatività su un file unico. Si è preferito l'utilizzo di xan rispetto a csvkit per inclinazione metodologica,
-pur essendo i due strumenti intercambiabili nel contesto specifico.
+Sono stati creati tre script Bash responsabili delle operazioni di recupero del dataset da GitHub (fetch.sh),
+al pruning dei dati non utilizzati dall'analisi (prune.sh) e, infine, alla denormalizzazione del dataset (join.sh)
+per consentire di lavorare su un file unico. Si è preferito l'utilizzo di xan rispetto a csvkit per mera preferenza,
+pur essendo intercambiabili in questo contesto.
 
 ### Dockerfile
 
 Si è optato per l'impiego di Docker al fine di garantire la piena riproducibilità dell'ambiente di runtime e consentire l'avvio del progetto
-tramite un singolo comando. È stato redatto un Dockerfile per la generazione di un'immagine personalizzata basata su Ubuntu 24.04;
+tramite un singolo comando. È stato creato un Dockerfile per la generazione di un'immagine personalizzata basata su Ubuntu 24.04;
 tale distribuzione è stata scelta per semplificare la gestione delle dipendenze, nonostante l'alternativa Alpine avrebbe garantito una maggiore leggerezza.
-La versione della distribuzione è stata fissata per prevenire eventuali criticità di compatibilità future.
-Il Dockerfile orchestra l'installazione e l'esecuzione di Ansible per la gestione delle dipendenze, gestisce la persistenza dei file,
-i permessi di esecuzione degli script shell e la loro invocazione. All'avvio del container, viene inizializzato il servizio JupyterLab.
+Una delle auto-criticità più grandi è infatti la dimensione spropositata dell'immagine Docker, causata appunto dall'immagine di partenze Ubuntu e
+dal volume dei moduli python installati.
+La versione della distribuzione è stata fissata per prevenire eventuali problemi di compatibilità future.
+Il Dockerfile si occupa dell'installazione e dell'esecuzione di Ansible per la gestione delle dipendenze,
+i permessi di esecuzione degli script shell e la loro invocazione.
+All'avvio del container, viene inizializzato il servizio JupyterLab.
 
 ### Ansible
-Ansible presiede all'installazione delle dipendenze di progetto. Il file hosts assolve alla funzione di definire il target sul localhost del container.
-La configurazione segue una struttura standard, basata su un ruolo composto dai seguenti task:
-  - Installazione dei pacchetti di sistema
-  - Installazione di xan (strumento non presente nei principali package manager, incluso APT)
-  - Installazione dei moduli Python necessari, definiti nel file requirements.txt
+Ansible si occupa dell'installazione delle dipendenze del progetto. Il file hosts definisce il target sul localhost del container ed è più una formalità che altro.
+E' presente un solo ruolo composto dai seguenti task:
+  - Installazione dei pacchetti di sistema.
+  - Installazione di xan (strumento non presente nei principali package manager, incluso APT).
+  - Installazione in un ambienete virtuale dei moduli Python necessari, definiti nel file requirements.txt.
 
-Il ruolo di setup si occupa di coordinare ed eseguire tali operazioni.
-File Python
-
-I sorgenti Python sono organizzati in un modulo dedicato, successivamente importato dai notebook.
-Questi espongono diverse funzioni di utilità per il caricamento del dataset e la generazione di visualizzazioni grafiche mediante le librerie Geopandas e Matplotlib.
+### File Python
+I sorgenti Python sono organizzati in un modulo, che viene importato dai notebook.
+Questi espongono diverse funzioni di utility per il caricamento del dataset e la generazione grafici.
 
 ### Jupyter
-L'attività di analisi è ripartita in cinque notebook:
+L'attività di analisi è distribuita in cinque notebook:
   - Part0: disamina del contenuto del dataset.
   - Part1: elaborazioni statistiche sulle lingue, categorizzate per regioni geografiche e affiliazioni genealogiche.
   - Part2: analisi dei valori assunti da determinati parametri in relazione alle regioni geografiche e alle diramazioni genealogiche.
