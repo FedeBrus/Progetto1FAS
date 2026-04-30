@@ -10,7 +10,11 @@ COPY . .
 
 RUN ansible-playbook -i ./ansible/hosts ./ansible/jupyter.yml -c local
 
-RUN apt-get purge -y ansible
+RUN apt-get purge -y ansible \
+    && apt-get autoremove -y \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN chmod +x ./scripts/*.sh
 RUN ./scripts/fetch.sh -y && ./scripts/prune.sh && ./scripts/join.sh
 
